@@ -1,0 +1,8 @@
+// 项目级构建脚本。
+// 只在这里声明插件版本，不实际应用（apply false）。
+// 各 module 需要时自己 apply，避免重复应用同一个插件导致冲突。
+
+plugins {
+    id("com.android.application") version "8.2.2" apply false
+    id("org.jetbrains.kotlin.android") version "1.9.22" apply false
+}
