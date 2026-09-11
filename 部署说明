@@ -1,0 +1,66 @@
+第一步：新建工程
+
+Android Studio → New Project → Empty Activity (Compose)
+
+· Name：TiltFold
+· Package name：com.tiltfold.demo
+· Language：Kotlin
+· Minimum SDK：API 24
+· Build configuration language：Kotlin DSL
+
+第二步：替换文件
+
+用前面给的 6 个文件，覆盖工程里对应路径：
+
+```
+settings.gradle.kts                           ← 文件 2
+build.gradle.kts (Project: TiltFold)          ← 文件 3
+app/build.gradle.kts (Module :app)            ← 文件 4
+app/src/main/AndroidManifest.xml              ← 文件 5
+app/src/main/java/com/tiltfold/demo/TiltFold.kt     ← 文件 6
+app/src/main/java/com/tiltfold/demo/MainActivity.kt ← 文件 7
+```
+
+注意：新建工程时 Android Studio 会自动生成一个 MainActivity.kt（里面带 setContent { ... } 那段模板），直接覆盖掉。
+
+第三步：改 app_name
+
+app/src/main/res/values/strings.xml 里：
+
+```xml
+<resources>
+    <string name="app_name">TiltFold</string>
+</resources>
+```
+
+第四步：Sync → Run
+
+第一次 Sync 会下载 Compose BOM 和依赖，需要几分钟。跑起来之后倾斜手机就能看到效果。
+
+---
+
+关于文件 6 里那个 remember0f()
+
+我在 TiltFold.kt 里加了个辅助函数：
+
+```kotlin
+@Composable
+private fun remember0f() = androidx.compose.runtime.remember { mutableStateOf(0f) }
+```
+
+只是为了让 var tiltX by remember0f() 少写几个字。如果你觉得它干扰阅读，把 rememberTilt() 里这两行：
+
+```kotlin
+var tiltX by remember0f()
+var tiltY by remember0f()
+```
+
+改成：
+
+```kotlin
+var tiltX by remember { mutableStateOf(0f) }
+var tiltY by remember { mutableStateOf(0f) }
+```
+
+再把那个 remember0f 函数删掉。记得在文件顶部补上 mutableStateOf 和 remember 的 import（TiltFold.kt 里已经 import 了 remember 和 mutableStateOf）。
+
