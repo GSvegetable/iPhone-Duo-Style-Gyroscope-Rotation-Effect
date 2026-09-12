@@ -1,15 +1,9 @@
-markdown
+```markdown
 # TiltFold
 
 > 用陀螺仪驱动 UI 折叠效果的最小可运行示例。
 > 三种模式：3D 旋转、曲面重投影、凹侧模糊 + 黑光。
 > 纯 AGSL 实现，无第三方依赖。
-
-## 效果演示
-
-<video src="assets/demo.mp4" width="320" controls loop muted playsinline></video>
-
-如果上方播放器没有显示，请[点击此处下载观看](assets/demo.mp4)。
 
 ## 效果说明
 
@@ -26,8 +20,6 @@ markdown
 ```
 
 tiltfold/
-├── assets/
-│   └── demo.mp4               效果演示视频
 ├── app/src/main/java/com/tiltfold/demo/
 │   ├── MainActivity.kt        入口 + 演示 UI + 模式调度
 │   └── TiltFold.kt            参数 + 传感器 + 三个 AGSL shader
