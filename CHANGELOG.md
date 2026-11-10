@@ -2,7 +2,7 @@
 
 All notable changes to TiltFold are documented here.
 
-## [2.0.0] — In progress
+## [2.0.0] — In progress\n\n### Release engineering (configured, not yet published)\n- Added a tag- and manually-triggered GitHub Release workflow for installable debug APK previews.\n- Added SHA-256 checksum generation and version/tag validation.\n- Documented the APK distribution channel and the separate requirements for production signing.\n- Added a machine-readable llms.txt project overview and categorized release notes.
 
 ### Engineering
 - Replaced the single-file sensor demo with a documented Android/Compose project structure.

@@ -3,9 +3,16 @@
 <p align="center"><strong>A motion-driven perspective fold study for Android.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/actions">Build status</a> ·
-  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/pulls">Pull requests</a> ·
-  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/releases">Releases</a>
+  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/actions/workflows/android-ci.yml"><img alt="Android CI" src="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/actions/workflows/android-ci.yml/badge.svg"></a>
+  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/releases"><img alt="Latest release" src="https://img.shields.io/github/v/release/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect?include_prereleases&label=release"></a>
+  <img alt="License" src="https://img.shields.io/badge/license-not%20yet%20declared-lightgrey">
+</p>
+
+<p align="center">
+  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/releases">Download APK</a> ·
+  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/actions">Build history</a> ·
+  <a href="./docs/RELEASING.md">Release process</a> ·
+  <a href="./docs/DEVICE_VALIDATION.md">Device test plan</a>
 </p>
 
 TiltFold maps device roll to a perspective-driven surface animation. It explores the visual language of a foldable display inside one Android app.
@@ -23,6 +30,20 @@ TiltFold maps device roll to a perspective-driven surface animation. It explores
 - Uses a dedicated TiltFold launcher icon and dark system-bar theme.
 - Exposes an intensity control and a live tilt indicator.
 - Runs on Android 7.0 (API 24) and newer.
+
+## Download and install
+
+TiltFold APK downloads are distributed through [GitHub Releases](https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/releases). The release workflow is now configured to build an installable debug-signed APK and publish a SHA-256 checksum alongside it.
+
+**Release status:** no public APK release has been published yet. Until the first release appears, use the local Android Studio build below.
+
+When a release is available:
+1. Open the Releases page and download the APK asset.
+2. Verify its SHA-256 hash against SHA256SUMS.txt when provided.
+3. Open the APK on your Android device and approve installation from that source if Android asks.
+4. Launch TiltFold and try sensor mode or manual preview.
+
+The automated APK is a debug-signed evaluation build, not a production Play Store package. See [the release policy](./docs/RELEASING.md).
 
 ## Requirements
 
@@ -45,7 +66,7 @@ Command-line checks, after configuring the Android SDK:
 ## Project structure
 
     .
-    ├── .github/workflows/android-ci.yml
+    ├── .github/workflows/\n    │   ├── android-ci.yml\n    │   └── android-release.yml
     ├── app/
     │   ├── build.gradle.kts
     │   └── src/
@@ -75,7 +96,7 @@ The sensor listener is active only while the Activity is resumed. On pause or di
 | --- | --- |
 | 3D fold | Applies a perspective rotation to the preview surface. |
 | Soft curve | Uses a restrained scale response to suggest surface flex. |
-| Off | Removes the motion-driven transform. |
+| Flat | Shows the untransformed comparison surface. |
 
 Intensity scales the visual response without changing the sensor input itself. If no compatible sensor can be registered, the manual slider provides a deterministic preview.
 
@@ -101,7 +122,11 @@ A passing CI build is not a substitute for testing on real hardware.
 
 ## Version history
 
-See CHANGELOG.md. Version 2.0.0 represents the ongoing project restructuring and stabilization work.
+See [CHANGELOG.md](./CHANGELOG.md) for version history. The current source version is 2.0.0; the first downloadable preview release still needs to be published through Actions → Android Release.
+
+## Distribution and package registry
+
+TiltFold is an installable Android application, not a reusable Android library. APK files belong in GitHub Releases. The GitHub Packages tab is intentionally unused; publishing an empty or misleading Maven package would not help users install the app. If the project later extracts reusable functionality into an Android library module, Maven publishing can be added then.
 
 ## License
 
