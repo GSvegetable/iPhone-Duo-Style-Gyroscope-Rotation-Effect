@@ -1,0 +1,22 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - skip-changelog
+  categories:
+    - title: "New features"
+      labels:
+        - feature
+        - enhancement
+    - title: "Bug fixes"
+      labels:
+        - bug
+        - fix
+    - title: "Maintenance"
+      labels:
+        - chore
+        - maintenance
+        - documentation
+    - title: "Other changes"
+      labels:
+        - "*"
