@@ -32,7 +32,7 @@ TiltFold maps device roll to a perspective-driven surface animation. It explores
 - Exposes an intensity control and a live tilt indicator.
 - Runs on Android 7.0 (API 24) and newer.
 
-## 踩坑记录：项目最重要的技术资产
+## 记录：
 
 TiltFold 的价值不只是最终效果，还包括一路试错留下来的传感器经验、Shader 限制、坐标映射、边缘补偿和构建兼容性问题。**这些记录必须长期保留，不能为了代码整洁而删掉。**
 
