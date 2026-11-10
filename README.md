@@ -91,6 +91,8 @@ Intensity scales the visual response without changing the sensor input itself. I
 
 ## Quality checks
 
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development rules and [docs/DEVICE_VALIDATION.md](./docs/DEVICE_VALIDATION.md) for the physical-device test plan. The device checklist is a plan, not a statement that those devices have already been tested.
+
 GitHub Actions runs:
 - Android debug APK assembly.
 - JVM unit tests for tilt normalization, invalid sensor values, smoothing, and reset behavior.
