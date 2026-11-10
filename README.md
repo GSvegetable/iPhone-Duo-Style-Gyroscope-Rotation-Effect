@@ -1,65 +1,104 @@
 # TiltFold
 
-A small Android motion experiment that turns device roll into a perspective-driven display fold. TiltFold is an independent visual study inspired by foldable-screen transitions; it is not an Apple product and does not reproduce system-wide display behavior.
+<p align="center"><strong>A motion-driven perspective fold study for Android.</strong></p>
 
-## Features
+<p align="center">
+  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/actions">Build status</a> ·
+  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/pulls">Pull requests</a> ·
+  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/releases">Releases</a>
+</p>
 
-- Live left/right tilt input from the Android gravity sensor.
-- Accelerometer fallback when a gravity sensor is unavailable.
-- A smoothed motion signal to reduce hand jitter.
-- Three preview modes: perspective fold, soft surface, and flat.
-- Adjustable effect intensity and a manual preview control on devices without a supported motion sensor.
-- A standard Android Studio / Gradle project layout.
+TiltFold maps device roll to a perspective-driven surface animation. It explores the visual language of a foldable display inside one Android app.
+
+**Important:** TiltFold does not bend the physical screen, change Android system UI, or apply effects to other apps. The renderer is a Compose perspective simulation, not a physically accurate 3D mesh or flexible display model.
+
+## What works
+
+- Reads the gravity sensor, with accelerometer fallback.
+- Normalizes and smooths the sensor signal to reduce jitter.
+- Stops sensor sampling when the Activity is paused and releases listeners on disposal.
+- Offers a manual tilt control when sensor registration is unavailable.
+- Includes three preview modes: perspective, soft surface, and flat.
+- Exposes an intensity control and a live tilt indicator.
+- Runs on Android 7.0 (API 24) and newer.
 
 ## Requirements
 
 - Android Studio with JDK 17.
-- Android SDK 35 installed.
-- Android 7.0 (API 24) or newer.
-- A physical device is recommended for motion input. The manual slider remains available when no compatible motion sensor is present.
+- Android SDK Platform 35.
+- Gradle 8.9 or compatible Gradle 8.x.
+- A physical Android device is recommended for motion input. Manual preview is available without a usable sensor.
 
-## Build
+## Run locally
 
-1. Clone this repository.
-2. Open the repository root in Android Studio.
-3. Allow Gradle sync to finish.
-4. Select the `app` run configuration and launch it on a device.
+1. Clone the repository.
+2. Open the project root in Android Studio.
+3. Allow Gradle sync and install the Android 35 SDK if prompted.
+4. Run the app configuration on a device or emulator.
 
-Command-line build (after installing the Android SDK and configuring `ANDROID_HOME`):
+Command-line checks, after configuring the Android SDK:
 
-```bash
-gradle :app:assembleDebug
-```
+    gradle :app:testDebugUnitTest :app:assembleDebug
 
-## Project layout
+## Project structure
 
-```text
-.
-├── app/
-│   ├── build.gradle.kts
-│   └── src/main/
-│       ├── AndroidManifest.xml
-│       ├── java/com/tiltfold/demo/
-│       │   ├── MainActivity.kt
-│       │   └── TiltFold.kt
-│       └── res/values/strings.xml
-├── build.gradle.kts
-├── gradle.properties
-└── settings.gradle.kts
-```
+    .
+    ├── .github/workflows/android-ci.yml
+    ├── app/
+    │   ├── build.gradle.kts
+    │   └── src/
+    │       ├── main/
+    │       │   ├── AndroidManifest.xml
+    │       │   ├── java/com/tiltfold/demo/
+    │       │   │   ├── MainActivity.kt
+    │       │   │   ├── TiltFold.kt
+    │       │   │   └── TiltMath.kt
+    │       │   └── res/values/strings.xml
+    │       └── test/java/com/tiltfold/demo/TiltMathTest.kt
+    ├── build.gradle.kts
+    ├── gradle.properties
+    ├── settings.gradle.kts
+    ├── CHANGELOG.md
+    └── README.md
 
 ## Motion model
 
-The gravity vector's X component is normalized into a range of -1 to 1. A first-order low-pass filter smooths incoming samples before the UI uses them. Sensor listeners are registered and released with the composable lifecycle to avoid leaking callbacks when the screen leaves composition.
+The app uses the gravity sensor when available and falls back to the accelerometer. The X component is normalized by the measured gravity-vector magnitude, clamped to [-1, 1], passed through a first-order low-pass filter, and given a small dead zone around neutral.
 
-The effect is intentionally presented as a perspective transform rather than claiming to be a physically accurate flexible display simulation. Device orientation, sensor calibration, display size, and manufacturer-specific sensor behavior can all affect the result.
+The sensor listener is active only while the Activity is resumed. On pause or disposal, the listener is unregistered and the filtered value is reset. This avoids background sampling and stale tilt state when returning to the app.
 
-## Limitations
+## Preview modes
 
-- This is an in-app visual effect. Android does not allow an ordinary app to reshape every other app's UI or the system launcher this way.
-- The current renderer uses Compose layer transforms and gradients; it is not a full 3D mesh or a physically based glass simulation.
-- The project has not yet been validated across a representative device matrix. Contributions and device-specific testing are welcome.
+| Mode | Behavior |
+| --- | --- |
+| 3D fold | Applies a perspective rotation to the preview surface. |
+| Soft curve | Uses a restrained scale response to suggest surface flex. |
+| Off | Removes the motion-driven transform. |
 
-## License and attribution
+Intensity scales the visual response without changing the sensor input itself. If no compatible sensor can be registered, the manual slider provides a deterministic preview.
 
-No Apple-owned assets are included. The name and visual direction are descriptive references only; this project is not affiliated with or endorsed by Apple.
+## Compatibility and limitations
+
+- Minimum Android version: API 24.
+- Target SDK: 35.
+- Sensor availability and calibration vary by device.
+- The current visual is rendered inside the app using Jetpack Compose graphics layers.
+- This is not an OS-level feature and cannot reshape other applications.
+- The current implementation is an illustrative perspective effect, not a full 3D mesh simulation.
+- Physical-device validation across multiple screen sizes and sensor implementations is still required.
+
+## Quality checks
+
+GitHub Actions runs:
+- Android debug APK assembly.
+- JVM unit tests for tilt normalization, invalid sensor values, smoothing, and reset behavior.
+
+A passing CI build is not a substitute for testing on real hardware.
+
+## Version history
+
+See CHANGELOG.md. Version 2.0.0 represents the ongoing project restructuring and stabilization work.
+
+## License
+
+No license is currently declared. Until a license file is added, normal copyright restrictions apply; do not assume the code is public domain or freely reusable.
