@@ -18,7 +18,9 @@ TiltFold maps device roll to a perspective-driven surface animation. It explores
 - Normalizes and smooths the sensor signal to reduce jitter.
 - Stops sensor sampling when the Activity is paused and releases listeners on disposal.
 - Offers a manual tilt control when sensor registration is unavailable.
-- Includes three preview modes: perspective, soft surface, and flat.
+- Includes a two-panel hinge simulation and three preview modes: 3D fold, soft surface, and flat.
+- Provides screen-reader labels for the preview, mode selector, and adjustment controls.
+- Uses a dedicated TiltFold launcher icon and dark system-bar theme.
 - Exposes an intensity control and a live tilt indicator.
 - Runs on Android 7.0 (API 24) and newer.
 
