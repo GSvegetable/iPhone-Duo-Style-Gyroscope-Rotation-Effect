@@ -8,10 +8,16 @@ internal object TiltMath {
     private const val FULL_TILT_G = 0.72f
     private const val DEAD_ZONE = 0.012f
 
-    fun normalize(gravityX: Float, gravityY: Float, gravityZ: Float): Float {
+    fun normalize(gravityX: Float, gravityY: Float, gravityZ: Float, displayRotation: Int = 0): Float {
+        val rollAxis = when (displayRotation) {
+            1 -> gravityY
+            2 -> -gravityX
+            3 -> -gravityY
+            else -> gravityX
+        }
         val magnitude = sqrt(gravityX * gravityX + gravityY * gravityY + gravityZ * gravityZ)
         if (!magnitude.isFinite() || magnitude < 1f) return 0f
-        return (gravityX / magnitude / FULL_TILT_G).coerceIn(-1f, 1f)
+        return (rollAxis / magnitude / FULL_TILT_G).coerceIn(-1f, 1f)
     }
 
     fun applyDeadZone(value: Float): Float =
