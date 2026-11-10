@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/actions/workflows/android-ci.yml"><img alt="Android CI" src="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/actions/workflows/android-ci.yml/badge.svg"></a>
   <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/releases"><img alt="Latest release" src="https://img.shields.io/github/v/release/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect?include_prereleases&label=release"></a>
-  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-not%20yet%20declared-lightgrey"></a>
+  <img alt="License" src="https://img.shields.io/badge/license-not%20yet%20declared-lightgrey">
 </p>
 
 <p align="center">
@@ -66,7 +66,7 @@ Command-line checks, after configuring the Android SDK:
 ## Project structure
 
     .
-    ├── .github/workflows/android-ci.yml
+    ├── .github/workflows/\n    │   ├── android-ci.yml\n    │   └── android-release.yml
     ├── app/
     │   ├── build.gradle.kts
     │   └── src/
