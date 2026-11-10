@@ -1,7 +1,6 @@
 package com.tiltfold.demo
 
 import android.os.Bundle
-import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,7 +73,8 @@ private fun TiltFoldScreen() {
     Column(
         modifier = Modifier.fillMaxSize()
             .background(Brush.verticalGradient(listOf(Color(0xFF10131B), Color(0xFF171E2A), Color(0xFF10131B))))
-            .padding(horizontal = 22.dp, vertical = 18.dp),
+            .padding(horizontal = 22.dp, vertical = 18.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -95,7 +97,7 @@ private fun TiltFoldScreen() {
             Text("Tilt your phone and watch the surface respond.", color = Muted, fontSize = 13.sp)
         }
 
-        FoldPreview(tilt, mode, Modifier.weight(1f).fillMaxWidth())
+        FoldPreview(tilt, mode, Modifier.fillMaxWidth().height(340.dp))
 
         Column(
             Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp))
@@ -180,7 +182,7 @@ private fun FoldPreview(tilt: Float, mode: FoldMode, modifier: Modifier = Modifi
                 }
             }
         }
-        if (mode != FoldMode.OFF && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && fold > 0.04f) {
+        if (mode != FoldMode.OFF && fold > 0.04f) {
             Box(
                 Modifier.align(if (tilt >= 0f) Alignment.CenterStart else Alignment.CenterEnd)
                     .padding(horizontal = 26.dp).size(width = 34.dp, height = 250.dp)
