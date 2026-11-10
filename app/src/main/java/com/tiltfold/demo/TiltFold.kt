@@ -5,6 +5,9 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Build
+import android.view.Surface
+import android.view.WindowManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -36,7 +39,7 @@ fun rememberTilt(): Pair<Float, Boolean> {
             override fun onSensorChanged(event: SensorEvent) {
                 if (event.values.size < 3) return
                 tilt = smoother.update(
-                    TiltMath.normalize(event.values[0], event.values[1], event.values[2])
+                    TiltMath.normalize(event.values[0], event.values[1], event.values[2], displayRotation(context))
                 )
             }
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
@@ -87,4 +90,13 @@ enum class FoldMode(val label: String) {
 object FoldTuning {
     const val MAX_ROTATION_DEGREES = 42f
     const val CAMERA_DISTANCE = 18f
+}
+
+@Suppress("DEPRECATION")
+private fun displayRotation(context: Context): Int {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        return context.display?.rotation ?: Surface.ROTATION_0
+    }
+    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+    return windowManager?.defaultDisplay?.rotation ?: Surface.ROTATION_0
 }
