@@ -1,256 +1,108 @@
-```markdown
 # TiltFold
 
-> 用陀螺仪驱动 UI 折叠效果的最小可运行示例。
-> 三种模式：3D 旋转、曲面重投影、凹侧模糊 + 黑光。
-> 纯 AGSL 实现，无第三方依赖。
+<p align="center"><strong>A motion-driven perspective fold study for Android.</strong></p>
 
-## 效果说明
+<p align="center">
+  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/actions">Build status</a> ·
+  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/pulls">Pull requests</a> ·
+  <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/releases">Releases</a>
+</p>
 
-三种模式，通过倾斜手机左右触发：
+TiltFold maps device roll to a perspective-driven surface animation. It explores the visual language of a foldable display inside one Android app.
 
-| 模式 | 视觉特征 |
-|------|---------|
-| `BLUR_3D` | 屏幕绕一侧边缘做 3D 旋转；凹侧模糊 + 黑光；内容非线性拉伸补偿侧面露黑 |
-| `CURVED_REPROJECT` | 屏幕被"弯折"；凹侧压缩、凸侧拉宽；侧面永不露黑；元素始终正对观察者 |
-| `OFF` | 关闭所有效果 |
+**Important:** TiltFold does not bend the physical screen, change Android system UI, or apply effects to other apps. The renderer is a Compose perspective simulation, not a physically accurate 3D mesh or flexible display model.
 
-## 目录结构
+## What works
 
-```
+- Reads the gravity sensor, with accelerometer fallback.
+- Normalizes and smooths the sensor signal to reduce jitter.
+- Stops sensor sampling when the Activity is paused and releases listeners on disposal.
+- Offers a manual tilt control when sensor registration is unavailable.
+- Includes a two-panel hinge simulation and three preview modes: 3D fold, soft surface, and flat.
+- Provides screen-reader labels for the preview, mode selector, and adjustment controls.
+- Uses a dedicated TiltFold launcher icon and dark system-bar theme.
+- Exposes an intensity control and a live tilt indicator.
+- Runs on Android 7.0 (API 24) and newer.
 
-tiltfold/
-├── app/src/main/java/com/tiltfold/demo/
-│   ├── MainActivity.kt        入口 + 演示 UI + 模式调度
-│   └── TiltFold.kt            参数 + 传感器 + 三个 AGSL shader
-├── app/src/main/AndroidManifest.xml
-├── app/build.gradle.kts
-├── build.gradle.kts
-├── settings.gradle.kts
-└── README.md
+## Requirements
 
-```
+- Android Studio with JDK 17.
+- Android SDK Platform 35.
+- Gradle 8.9 or compatible Gradle 8.x.
+- A physical Android device is recommended for motion input. Manual preview is available without a usable sensor.
 
-## 核心原理速览
+## Run locally
 
-### 1. 陀螺仪读取
+1. Clone the repository.
+2. Open the project root in Android Studio.
+3. Allow Gradle sync and install the Android 35 SDK if prompted.
+4. Run the app configuration on a device or emulator.
 
-用 `Sensor.TYPE_GRAVITY` 而不是 `TYPE_ACCELEROMETER`：
+Command-line checks, after configuring the Android SDK:
 
-- 加速度计包含用户运动产生的加速度，抖动大
-- 重力传感器只反映重力方向，手上晃动不影响
+    gradle :app:testDebugUnitTest :app:assembleDebug
 
-首次采样时记录一个基准值 `baseX`，之后所有倾斜都是相对基准的偏移。这样用户以任何姿势拿起手机，都以"拿起那一刻"为中立位。
+## Project structure
 
-### 2. 平滑
+    .
+    ├── .github/workflows/android-ci.yml
+    ├── app/
+    │   ├── build.gradle.kts
+    │   └── src/
+    │       ├── main/
+    │       │   ├── AndroidManifest.xml
+    │       │   ├── java/com/tiltfold/demo/
+    │       │   │   ├── MainActivity.kt
+    │       │   │   ├── TiltFold.kt
+    │       │   │   └── TiltMath.kt
+    │       │   └── res/values/strings.xml
+    │       └── test/java/com/tiltfold/demo/TiltMathTest.kt
+    ├── build.gradle.kts
+    ├── gradle.properties
+    ├── settings.gradle.kts
+    ├── CHANGELOG.md
+    └── README.md
 
-一阶低通滤波：`sm = sm * k + raw * (1 - k)`，`k = 0.90`。
+## Motion model
 
-`k` 越大越平滑但越迟钝。0.90 是"手感跟手"和"不抖"之间的平衡点。
+The app uses the gravity sensor when available and falls back to the accelerometer. The X component is normalized by the measured gravity-vector magnitude, clamped to [-1, 1], passed through a first-order low-pass filter, and given a small dead zone around neutral.
 
-### 3. 防手抖死区
+The sensor listener is active only while the Activity is resumed. On pause or disposal, the listener is unregistered and the filtered value is reset. This avoids background sampling and stale tilt state when returning to the app.
 
-倾斜绝对值小于 `deadZone` 时直接归零。
+## Preview modes
 
-作用：拿着手机打字、走路时，画面不会因为轻微晃动而产生可感知的形变。
+| Mode | Behavior |
+| --- | --- |
+| 3D fold | Applies a perspective rotation to the preview surface. |
+| Soft curve | Uses a restrained scale response to suggest surface flex. |
+| Off | Removes the motion-driven transform. |
 
-### 4. 模糊 + 黑光（HomeBlurShader）
+Intensity scales the visual response without changing the sensor input itself. If no compatible sensor can be registered, the manual slider provides a deterministic preview.
 
-AGSL 单 pass，5×5 高斯采样（25 点）。
+## Compatibility and limitations
 
-凹侧判定：`d = concaveSide < 0 ? uv.x : 1 - uv.x`，`d = 0` 是凹侧边缘。
-模糊半径随 `d` 增长而下降，`d` 超过 `extent` 后不模糊。
+- Minimum Android version: API 24.
+- Target SDK: 35.
+- Sensor availability and calibration vary by device.
+- The current visual is rendered inside the app using Jetpack Compose graphics layers.
+- This is not an OS-level feature and cannot reshape other applications.
+- The current implementation is an illustrative perspective effect, not a full 3D mesh simulation.
+- Physical-device validation across multiple screen sizes and sensor implementations is still required.
 
-黑光是同一套空间权重乘以一个暗化系数，直接乘在 RGB 上。
+## Quality checks
 
-### 5. 曲面重投影（CurvedFoldShader）
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development rules and [docs/DEVICE_VALIDATION.md](./docs/DEVICE_VALIDATION.md) for the physical-device test plan. The device checklist is a plan, not a statement that those devices have already been tested.
 
-**核心公式**：
+GitHub Actions runs:
+- Android debug APK assembly.
+- JVM unit tests for tilt normalization, invalid sensor values, smoothing, and reset behavior.
 
-```
+A passing CI build is not a substitute for testing on real hardware.
 
-屏幕内容铺在圆弧上，弧长 = 屏幕宽度
-从正面看，看到的是弦长
+## Version history
 
-凸侧固定，凹侧被压向凸侧
-输出位置 p → 源位置 q 的映射：
-θ = asin(p * sin(θ_max))
-q = θ / θ_max
+See CHANGELOG.md. Version 2.0.0 represents the ongoing project restructuring and stabilization work.
 
-```
+## License
 
-因为这是一个 `[0, W] → [0, W]` 的双射，**侧面天然不会露黑**。
-
-对比 3D 旋转：3D 旋转是"平面上每个点投影后位置变了"，边缘会跑到屏幕外，所以要靠拉伸补偿。曲面重投影是"内容按曲面重新分布"，永远铺满。
-
-### 6. 非线性拉伸（StretchShader）
-
-3D 旋转时侧面会露出底下的黑。理论上要用拉伸把内容补回去，但不能均匀拉伸——凸侧不该被拉。
-
-用三次曲线：
-
-```
-
-输出位置 x' = x + c · x³ / W²
-
-```
-
-- `x = 0`（凸侧）→ `x' = 0`，完全不动
-- `x = W`（凹侧）→ `x' = W + c·W`
-- 中间按三次曲线过渡
-
-反解是三次方程，用 Cardano 公式求唯一实根。
-
----
-
-## 踩坑记录
-
-这一节是这篇 README 最重要的部分。按时间顺序记录踩过的坑。
-
-### 坑 1：AGSL 里 `content.eval()` 采样次数有上限
-
-第一次写模糊时，用了 9×9 共 81 次采样，结果**完全没效果**。
-
-原因：AGSL 对单次 shader 里的 `content.eval()` 调用次数有硬性上限（视设备而定，通常 32~64 次）。超了不是报错，是**静默失败**——shader 直接不生效，画面原样输出。
-
-解决：把有效采样数压到 5×5 = 25 次，用更大的半径补偿质量。
-
-**结论**：写 AGSL 时，采样核控制在 5×5 以内。要大半径模糊就多 pass 叠加。
-
-### 坑 2：`renderEffect` 需要 `CompositingStrategy.Offscreen`
-
-`graphicsLayer { renderEffect = ... }` 单独用不生效。
-
-原因：`renderEffect` 依赖图层被渲染到一个独立的离屏缓冲，然后在这个缓冲上应用效果。默认情况下 Compose 不为普通图层分配离屏缓冲。
-
-解决：
-
-```kotlin
-graphicsLayer {
-    compositingStrategy = CompositingStrategy.Offscreen
-    renderEffect = RenderEffect.createRuntimeShaderEffect(shader, "content")
-        .asComposeRenderEffect()
-}
-```
-
-坑 3：rotationY 和 renderEffect 在同一图层不能共存
-
-两者都作用于图层变换。系统只能应用其中一个，实际表现是 renderEffect 被忽略。
-
-解决：拆成两层。
-
-```kotlin
-Box(Modifier.graphicsLayer { renderEffect = ... }) {   // 外层：模糊
-    Box(Modifier.graphicsLayer { rotationY = ... }) {  // 内层：旋转
-        内容
-    }
-}
-```
-
-坑 4：3D 旋转侧面会露黑
-
-一开始用 rotationY 做倾斜，发现凹侧会露出底下的黑底。
-
-原因：3D 旋转让平面在视觉上变窄，投影后覆盖不到原来的宽度。
-
-解决：叠加一层拉伸。最初用均匀 scaleX，副作用是凸侧也被拉宽。
-
-改进：改成三次曲线非线性拉伸，凸侧锚定，越靠凹侧拉得越多。
-
-坑 5：非均匀拉伸的锚点必须是凸侧
-
-拉伸曲线 x' = x + c·x³/W² 里，x = 0 处不动。所以如果凹侧在右边，x = 0 就是屏幕左边缘（凸侧）；凹侧在左边时，需要镜像坐标。
-
-实现里用 concaveSide 判断并镜像，避免写两份代码。
-
-坑 6：旋转轴跳变引起"震"
-
-初版把旋转轴写成：
-
-```kotlin
-val originX = when {
-    tiltX > 0.05f -> 0f
-    tiltX < -0.05f -> 1f
-    else -> 0.5f
-}
-```
-
-回正过程中，tiltX 穿过 ±0.05 时轴从 0/1 突然跳到 0.5，画面会"震"一下。
-
-解决：改成连续函数：
-
-```kotlin
-val originX = (0.5f - tiltX * 0.5f).coerceIn(0f, 1f)
-```
-
-· tiltX = 0 → originX = 0.5（轴在中间，不旋转）
-· tiltX = +1 → originX = 0（轴在左边缘）
-· tiltX = -1 → originX = 1（轴在右边缘）
-
-全程连续，无断点。
-
-坑 7：renderEffect 的挂载/卸载阈值
-
-早期版本用 if (blurStrength > 0.01f) 决定是否挂载 shader。倾斜到阈值附近时，shader 反复挂载/卸载，画面闪烁。
-
-解决：阈值压到极小（0.0001），让 shader 一直挂着，只靠 uniform 值控制效果强弱。
-
-坑 8：content.eval() 的采样坐标要 clamp
-
-模糊采样时坐标会超出图层范围。不 clamp 的话，边缘采样会取到未定义的数据，表现为边缘泛白或泛黑。
-
-```glsl
-float2 sc = clamp(xy + offset, float2(0.0), size);
-```
-
----
-
-参数调节
-
-所有可调参数集中在 TiltFold.kt 顶部的 FoldParams 对象里。想做用户可调，把它改成 mutableStateOf + SharedPreferences 即可。
-
-示例：把死区做成用户可调
-
-```kotlin
-object FoldParams {
-    var deadZone by mutableStateOf(0f)
-        private set
-
-    fun setDeadZone(ctx: Context, v: Float) {
-        deadZone = v.coerceIn(0f, 0.35f)
-        ctx.getSharedPreferences("tiltfold", Context.MODE_PRIVATE)
-            .edit().putFloat("dead_zone", deadZone).apply()
-    }
-}
-```
-
-然后用 Slider 绑定 deadZone 值即可。
-
----
-
-集成到你的项目
-
-1. 拷贝 TiltFold.kt
-2. 在需要倾斜的顶层 Box 包一层结构（参考 MainActivity.kt 里的模式调度）
-3. 保证 shader 图层有 compositingStrategy = CompositingStrategy.Offscreen
-
----
-
-兼容性
-
-· minSdk 24：AGSL 从 Android 13（API 33）开始支持，用 Build.VERSION.SDK_INT >= 33 判断
-· 低版本降级：用 RenderEffect.createBlurEffect 做均匀模糊（已在代码里实现 fallback）
-
----
-
-部署步骤
-
-1. Android Studio 新建 Empty Compose Activity 项目，包名 com.tiltfold.demo
-2. 用本仓库 6 个文件覆盖对应路径
-3. Sync → Run
-
-没有包含：
-
-· gradle/wrapper/ 目录（Android Studio 新建项目自带）
-· 图标资源（用默认的）
-· strings.xml 里的 app_name（改成 "TiltFold" 即可）
+No license is currently declared. Until a license file is added, normal copyright restrictions apply; do not assume the code is public domain or freely reusable.
