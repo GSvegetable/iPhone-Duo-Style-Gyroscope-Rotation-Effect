@@ -117,17 +117,17 @@ private fun TiltFoldScreen() {
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FoldMode.values().forEach { item ->
-                    val selected = mode == item
+                    val isSelected = mode == item
                     Box(
                         modifier = Modifier.weight(1f).clip(RoundedCornerShape(12.dp))
-                            .background(if (selected) Accent else Color(0xFF252C39))
-                            .border(1.dp, if (selected) Accent else Color.White.copy(alpha = 0.05f), RoundedCornerShape(12.dp))
+                            .background(if (isSelected) Accent else Color(0xFF252C39))
+                            .border(1.dp, if (isSelected) Accent else Color.White.copy(alpha = 0.05f), RoundedCornerShape(12.dp))
                             .clickable(role = Role.RadioButton) { mode = item }
                             .semantics { selected = mode == item; contentDescription = "${item.label} preview mode" }
                             .padding(vertical = 12.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(item.label, color = if (selected) Ink else Color(0xFFD5D9E1), fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                        Text(item.label, color = if (isSelected) Ink else Color(0xFFD5D9E1), fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                     }
                 }
             }
