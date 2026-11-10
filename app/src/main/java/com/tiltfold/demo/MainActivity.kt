@@ -153,35 +153,63 @@ private fun FoldPreview(tilt: Float, mode: FoldMode, modifier: Modifier = Modifi
             .background(Brush.radialGradient(listOf(Color(0xFF344256), Color(0xFF202A39), Color(0xFF151B26)))),
         contentAlignment = Alignment.Center
     ) {
-        Box(
-            Modifier.fillMaxWidth(0.78f).height(310.dp)
-                .graphicsLayer {
-                    rotationY = rotation
-                    transformOrigin = TransformOrigin(if (tilt >= 0f) 0f else 1f, 0.5f)
-                    cameraDistance = FoldTuning.CAMERA_DISTANCE * density
-                    scaleX = if (mode == FoldMode.SOFT) 1f + fold * 0.12f else 1f
-                }
-                .clip(RoundedCornerShape(25.dp))
-                .background(Brush.linearGradient(listOf(Color(0xFFB8D5F5), Color(0xFF8AA7D4), Color(0xFF536C9B))))
-                .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(25.dp))
+        val foldAngle = when (mode) {
+            FoldMode.THREE_D -> rotation
+            FoldMode.SOFT -> tilt * 9f
+            FoldMode.OFF -> 0f
+        }
+        Row(
+            Modifier.fillMaxWidth(0.82f).height(310.dp)
+                .clip(RoundedCornerShape(25.dp)),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(Modifier.fillMaxSize().padding(18.dp), verticalArrangement = Arrangement.SpaceBetween) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(7.dp).clip(CircleShape).background(Accent))
-                    Text("  DUO DISPLAY", color = Color(0xFF17243A), fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.3.sp)
+            Box(
+                Modifier.weight(1f).fillMaxSize()
+                    .graphicsLayer {
+                        rotationY = -foldAngle * 0.62f
+                        transformOrigin = TransformOrigin(1f, 0.5f)
+                        cameraDistance = FoldTuning.CAMERA_DISTANCE * density
+                    }
+                    .background(Brush.linearGradient(listOf(Color(0xFFB8D5F5), Color(0xFF8AA7D4))))
+                    .border(1.dp, Color.White.copy(alpha = 0.28f))
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopStart
+            ) {
+                Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
+                    Text("DUO DISPLAY", color = Color(0xFF17243A), fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.2.sp)
+                    Column {
+                        Text("Beyond", color = Color(0xFF142039), fontSize = 27.sp, fontWeight = FontWeight.Light, letterSpacing = (-1.2).sp)
+                        Text("the", color = Color(0xFF142039), fontSize = 27.sp, fontWeight = FontWeight.Bold, letterSpacing = (-1.2).sp)
+                    }
+                    Text("TILTFOLD  /  01", color = Color(0xFF263D5B), fontSize = 8.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                 }
-                Column {
-                    Text("Beyond", color = Color(0xFF142039), fontSize = 34.sp, fontWeight = FontWeight.Light, letterSpacing = (-1.5).sp)
-                    Text("the flat.", color = Color(0xFF142039), fontSize = 34.sp, fontWeight = FontWeight.Bold, letterSpacing = (-1.5).sp)
-                    Spacer(Modifier.height(8.dp))
-                    Text("A surface shaped by motion.", color = Color(0xFF243650), fontSize = 11.sp)
-                }
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
-                    Text("TILTFOLD", color = Color(0xFF263D5B), fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.4.sp)
-                    Text("01 / 02", color = Color(0xFF263D5B), fontSize = 9.sp)
+            }
+            Box(
+                Modifier.weight(1f).fillMaxSize()
+                    .graphicsLayer {
+                        rotationY = foldAngle * 0.62f
+                        transformOrigin = TransformOrigin(0f, 0.5f)
+                        cameraDistance = FoldTuning.CAMERA_DISTANCE * density
+                    }
+                    .background(Brush.linearGradient(listOf(Color(0xFF8AA7D4), Color(0xFF536C9B))))
+                    .border(1.dp, Color.White.copy(alpha = 0.28f))
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopEnd
+            ) {
+                Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween, horizontalAlignment = Alignment.End) {
+                    Text("02 / 02", color = Color(0xFF263D5B), fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text("flat.", color = Color(0xFF142039), fontSize = 30.sp, fontWeight = FontWeight.Bold, letterSpacing = (-1.2).sp)
+                        Text("A surface shaped by motion.", color = Color(0xFF243650), fontSize = 9.sp)
+                    }
+                    Text("LIVE SURFACE", color = Color(0xFF263D5B), fontSize = 8.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                 }
             }
         }
+        Box(
+            Modifier.align(Alignment.Center).size(width = 2.dp, height = 278.dp)
+                .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xFF263D5B).copy(alpha = 0.75f), Color.Transparent)))
+        )
         if (mode != FoldMode.OFF && fold > 0.04f) {
             Box(
                 Modifier.align(if (tilt >= 0f) Alignment.CenterStart else Alignment.CenterEnd)
