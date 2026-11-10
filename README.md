@@ -12,7 +12,8 @@
   <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/releases">Download APK</a> ·
   <a href="https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/actions">Build history</a> ·
   <a href="./docs/RELEASING.md">Release process</a> ·
-  <a href="./docs/DEVICE_VALIDATION.md">Device test plan</a>
+  <a href="./docs/DEVICE_VALIDATION.md">Device test plan</a> ·
+  <a href="./docs/踩坑记录.md">踩坑记录 / Engineering pitfalls</a>
 </p>
 
 TiltFold maps device roll to a perspective-driven surface animation. It explores the visual language of a foldable display inside one Android app.
@@ -30,6 +31,16 @@ TiltFold maps device roll to a perspective-driven surface animation. It explores
 - Uses a dedicated TiltFold launcher icon and dark system-bar theme.
 - Exposes an intensity control and a live tilt indicator.
 - Runs on Android 7.0 (API 24) and newer.
+
+## 踩坑记录：项目最重要的技术资产
+
+TiltFold 的价值不只是最终效果，还包括一路试错留下来的传感器经验、Shader 限制、坐标映射、边缘补偿和构建兼容性问题。**这些记录必须长期保留，不能为了代码整洁而删掉。**
+
+- [完整踩坑记录（中文）](./docs/踩坑记录.md)：传感器选择、首帧基准、灵敏度/滤波/死区、AGSL 采样、黑边补偿、曲面重投影、生命周期、构建版本和真机验证。
+- [历史部署与复现说明](./docs/历史部署与复现.md)：保留早期手动建工程和 remember0f() 的来龙去脉。
+- [设备验证清单](./docs/DEVICE_VALIDATION.md)：哪些问题尚未在真实设备上验证。
+
+这部分是项目的“工程记忆”。新增问题应追加记录，不要覆盖或删除失败经验。
 
 ## Download and install
 
@@ -81,7 +92,14 @@ Command-line checks, after configuring the Android SDK:
     ├── build.gradle.kts
     ├── gradle.properties
     ├── settings.gradle.kts
+    ├── docs/
+    │   ├── DEVICE_VALIDATION.md
+    │   ├── RELEASING.md
+    │   ├── 历史部署与复现.md
+    │   └── 踩坑记录.md
     ├── CHANGELOG.md
+    ├── CONTRIBUTING.md
+    ├── llms.txt
     └── README.md
 
 ## Motion model
