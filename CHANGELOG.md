@@ -1,5 +1,12 @@
 # Changelog
 
+## Documentation preservation update
+- Restored the original engineering lessons as a prominent, maintained Chinese pitfalls document.
+- Recovered the early manual deployment workflow and documented the historical remember0f() helper.
+- Preserved sensor, AGSL sampling, shader-coordinate, perspective compensation, curve mapping, lifecycle, and build-version lessons.
+- Clarified which historical parameter values are tuning starting points rather than verified universal recommendations.
+- Added a rule to keep failed experiments and unverified device observations instead of deleting them.
+
 All notable changes to TiltFold are documented here.
 
 ## [2.0.0] — In progress\n\n### Release engineering (configured, not yet published)\n- Added a tag- and manually-triggered GitHub Release workflow for installable debug APK previews.\n- Added SHA-256 checksum generation and version/tag validation.\n- Documented the APK distribution channel and the separate requirements for production signing.\n- Added a machine-readable llms.txt project overview and categorized release notes.
