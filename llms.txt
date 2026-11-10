@@ -1,0 +1,41 @@
+# TiltFold
+
+An Android motion-driven fold and perspective experiment.
+
+TiltFold turns device tilt into an in-app, two-panel hinge-style visual. It is built with Kotlin and Jetpack Compose, with gravity-sensor input, accelerometer fallback, manual controls, and lifecycle-aware sampling.
+
+## What this project is
+
+- A small Android app for exploring a motion-responsive fold illusion.
+- A two-panel perspective preview with 3D fold, soft surface, and flat modes.
+- A sensor-driven interaction that can still be explored manually.
+
+## What it is not
+
+- It does not modify Android system UI or other applications.
+- It does not physically bend the display.
+- It is not a physically accurate flexible-screen or 3D mesh simulator.
+
+## Project facts
+
+| Item | Value |
+| --- | --- |
+| Platform | Android |
+| Language | Kotlin |
+| UI | Jetpack Compose |
+| Minimum Android | 7.0 (API 24) |
+| Compile / target SDK | 35 / 35 |
+| JDK | 17 |
+| Current app version | 2.0.0 |
+| Distribution | APK via GitHub Releases |
+
+## Quality and delivery
+
+- Build status: https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/actions/workflows/android-ci.yml
+- Latest releases and APK downloads: https://github.com/GSvegetable/iPhone-Duo-Style-Gyroscope-Rotation-Effect/releases
+- Release process: docs/RELEASING.md
+- Physical-device validation plan: docs/DEVICE_VALIDATION.md
+- Changelog: CHANGELOG.md
+- Contributing: CONTRIBUTING.md
+
+A CI pass confirms unit tests and APK assembly. It does not replace physical-device validation.
