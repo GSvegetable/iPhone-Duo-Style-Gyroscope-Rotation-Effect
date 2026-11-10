@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -18,7 +19,7 @@ import kotlin.math.abs
 fun rememberTilt(): Pair<Float, Boolean> {
     val context = LocalContext.current
     var tilt by remember { mutableFloatStateOf(0f) }
-    var sensorAvailable by remember { mutableFloatStateOf(false) }
+    var sensorAvailable by remember { mutableStateOf(false) }
 
     DisposableEffect(context) {
         val manager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
