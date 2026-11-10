@@ -37,6 +37,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -117,7 +122,9 @@ private fun TiltFoldScreen() {
                         modifier = Modifier.weight(1f).clip(RoundedCornerShape(12.dp))
                             .background(if (selected) Accent else Color(0xFF252C39))
                             .border(1.dp, if (selected) Accent else Color.White.copy(alpha = 0.05f), RoundedCornerShape(12.dp))
-                            .clickable { mode = item }.padding(vertical = 12.dp),
+                            .clickable(role = Role.RadioButton) { mode = item }
+                            .semantics { selected = mode == item; contentDescription = "${item.label} preview mode" }
+                            .padding(vertical = 12.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(item.label, color = if (selected) Ink else Color(0xFFD5D9E1), fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
@@ -129,10 +136,10 @@ private fun TiltFoldScreen() {
                 Spacer(Modifier.weight(1f))
                 Text("${(intensity * 100).toInt()}%", color = Color.White, fontSize = 11.sp)
             }
-            Slider(value = intensity, onValueChange = { intensity = it }, valueRange = 0.2f..1f)
+            Slider(value = intensity, onValueChange = { intensity = it }, valueRange = 0.2f..1f, modifier = Modifier.semantics { contentDescription = "Effect intensity" })
             if (!sensorAvailable) {
                 Text("No motion sensor detected. Use the slider to preview the fold.", color = Muted, fontSize = 11.sp)
-                Slider(value = manualTilt, onValueChange = { manualTilt = it }, valueRange = -1f..1f)
+                Slider(value = manualTilt, onValueChange = { manualTilt = it }, valueRange = -1f..1f, modifier = Modifier.semantics { contentDescription = "Manual device tilt preview" })
             } else {
                 Text("Live motion input · move slowly for the smoothest response", color = Muted, fontSize = 11.sp)
             }
@@ -150,7 +157,8 @@ private fun FoldPreview(tilt: Float, mode: FoldMode, modifier: Modifier = Modifi
     val fold = abs(tilt)
     Box(
         modifier = modifier.clip(RoundedCornerShape(28.dp))
-            .background(Brush.radialGradient(listOf(Color(0xFF344256), Color(0xFF202A39), Color(0xFF151B26)))),
+            .background(Brush.radialGradient(listOf(Color(0xFF344256), Color(0xFF202A39), Color(0xFF151B26))))
+            .semantics { contentDescription = "Two-panel fold preview, tilt ${(abs(tilt) * 100).toInt()} percent" },
         contentAlignment = Alignment.Center
     ) {
         val foldAngle = when (mode) {
