@@ -13,6 +13,12 @@ class TiltMathTest {
         assertEquals(-1f, TiltMath.normalize(-9.81f, 0f, 0f), 0.0001f)
     }
 
+    @Test fun tiltAxisFollowsDisplayRotation() {
+        assertEquals(1f, TiltMath.normalize(0f, 9.81f, 0f, 1), 0.0001f)
+        assertEquals(1f, TiltMath.normalize(-9.81f, 0f, 0f, 2), 0.0001f)
+        assertEquals(1f, TiltMath.normalize(0f, -9.81f, 0f, 3), 0.0001f)
+    }
+
     @Test fun invalidOrTinyVectorsAreSafe() {
         assertEquals(0f, TiltMath.normalize(Float.NaN, 0f, 0f), 0.0001f)
         assertEquals(0f, TiltMath.normalize(0f, 0f, 0f), 0.0001f)
